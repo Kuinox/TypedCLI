@@ -173,13 +173,12 @@ namespace Kuinox.TypedCLI.Dotnet
                 args
             }, workingDirectory );
 
-        public static Task<bool> Test(IActivityMonitor m, string workingDirectory = "", string? projectOrSolutionOrDirectoryOrDll = null, string? testAdapterPath = null,
+        public static Task<bool> Test( IActivityMonitor m, string workingDirectory = "", string? projectOrSolutionOrDirectoryOrDll = null, string? testAdapterPath = null,
             bool blame = false, bool blameCrash = false, string? blameCrashDumpType = null, bool blameCrashCollectAlways = false, bool blameHang = false, string? blameHangDumpType = null,
             string? blameHangTimeout = null, string? configuration = null, string? collect = null, string? diag = null, string? framework = null, string? filter = null,
             string? logger = null, bool noBuild = false, bool noLogo = false, bool noRestore = false, string? outputDirectory = null, string? resultsDirectory = null,
             string? runtime = null, string? settingsFile = null, bool listTests = false, Verbosity? verbosity = null, string? runsettingsArguments = null )
-        {
-            List<string?> args = new()
+            => CLIRunner.RunAsync( m, "dotnet", new List<string?>()
             {
                 "test",
                 projectOrSolutionOrDirectoryOrDll,
@@ -201,14 +200,39 @@ namespace Kuinox.TypedCLI.Dotnet
                 noLogo ? "--nologo" : null,
                 noRestore ? "--no-restore" : null,
                 "--output ".Arg( outputDirectory ),
-                "--result-directory ".Arg(resultsDirectory),
+                "--result-directory ".Arg( resultsDirectory ),
                 "--runtime ".Arg( runtime ),
-                "--settings ".Arg(settingsFile),
+                "--settings ".Arg( settingsFile ),
                 listTests ? "--list-tests" : null,
                 "-v ".Arg( GetVerbosityString( verbosity ) ),
                 runsettingsArguments
+            }, workingDirectory );
+
+        public static Task<bool> Restore( IActivityMonitor m, string workinDirectory = "", string? root = null, string? configFile = null, bool disableParallel = false, bool force = false,
+            bool forceEvaluate = false, bool ignoreFailedSources = false, string? lockFilePath = null, bool lockedMode = false, bool noCache = false, bool noDependencies = false,
+            string? packages = null, string? runtime = null, IEnumerable<string>? sources = null, bool useLockFile = false, Verbosity? verbosity = null )
+        {
+            List<string?> args = new()
+            {
+                "restore",
+                root,
+                "--configfile ".Arg( configFile ),
+                disableParallel ? "--disable-parallel" : null,
+                force ? "--force" : null,
+                forceEvaluate ? "--force-evaluate" : null,
+                ignoreFailedSources ? "--ignore-failed-sources" : null,
+                "--lock-file-path ".Arg( lockFilePath ),
+                lockedMode ? "--locked-mode" : null,
+                noCache ? "--no-cache" : null,
+                noDependencies ? "--no-dependencies" : null,
+                "--packages ".Arg( packages ),
+                "--runtime ".Arg( runtime ),
+                useLockFile ? "--use-lock-file" : null,
+                GetVerbosityString( verbosity )
             };
-            return CLIRunner.RunAsync( m, "dotnet", args, workingDirectory );
+            if( sources != null ) args.AddRange( sources.Select( s => "-s " + s ) );
+            return CLIRunner.RunAsync( m, "dotnet", args, workinDirectory );
         }
+
     }
 }

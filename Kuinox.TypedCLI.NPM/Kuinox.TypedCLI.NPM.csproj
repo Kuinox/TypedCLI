@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Kuinox.TypedCLI\Kuinox.TypedCLI.csproj" />
+    <ProjectReference Include="..\Kuinox.TypedCLI.Helpers\Kuinox.TypedCLI.Helpers.csproj" />
   </ItemGroup>
 
 </Project>
