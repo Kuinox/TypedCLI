@@ -1,8 +1,9 @@
 # TypedCLI
 Simple wrapper around various CLI.
 
-Currently supporting most of the dotnet CLI commands, except msbuild related stuff.
-Supporting a few important npm commands.
+Currently supporting:
+- most of the dotnet CLI commands, except msbuild related stuff.
+- a few important npm commands.
 
 # Documentation
 Almost none currently. The api match 1 to 1 the CLI, if not, it's a bug.
