@@ -85,7 +85,7 @@ namespace Kuinox.TypedCLI.Dotnet
         public static Task<bool> Pack( IActivityMonitor m, string workingDirectory = "", string? projectOrSolution = null, string? configuration = null, bool force = false,
             bool includeSource = false, bool includeSymbols = false, bool noBuild = false, bool noDependencies = false, bool noRestore = false, bool noLogo = false,
             string? outputDirectory = null, string? runtime = null, bool serviceable = false, Verbosity? verbosity = null, string? versionSuffix = null,
-            IEnumerable<string>? msbuildProperties = null )
+            IEnumerable<KeyValuePair<string, string>>? msbuildProperties = null )
         {
             List<string?> args = new()
             {
@@ -101,11 +101,11 @@ namespace Kuinox.TypedCLI.Dotnet
                 "-v ".Arg( GetVerbosityString( verbosity ) ),
                 "--version-suffix ".Arg( versionSuffix ),
                 noRestore ? "--no-restore" : null,
-                noBuild? "--no-build" : null,
+                noBuild ? "--no-build" : null,
                 noLogo ? "--nologo" : null,
                 serviceable ? "--serviceable" : null
             };
-            if( msbuildProperties != null ) args.AddRange( msbuildProperties.Select( s => "-p:" + s ) );
+            if( msbuildProperties != null ) args.AddRange( msbuildProperties.Select( s => "-p:" + s.Key + "=\"" + s.Value + "\"" ) );
             return CLIRunner.RunAsync( m, "dotnet", args, workingDirectory );
         }
 
