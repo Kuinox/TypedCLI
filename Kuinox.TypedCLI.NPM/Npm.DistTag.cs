@@ -10,21 +10,24 @@ namespace Kuinox.TypedCLI.NPM
 {
     public static partial class Npm
     {
-        public static Task<bool> Add( IActivityMonitor m, string packageId, IEnumerable<string> tag, string workingDirectory = "" )
+        public static class DistTag
         {
-            List<string?> args = new()
+            public static Task<bool> Add( IActivityMonitor m, string packageId, IEnumerable<string> tag, string workingDirectory = "" )
             {
-                "dist-tag add",
-                packageId
-            };
-            args.AddRange( tag );
-            return CLIRunner.RunAsync( m, "npm", args, workingDirectory );
+                List<string?> args = new()
+                {
+                    "dist-tag add",
+                    packageId
+                };
+                args.AddRange( tag );
+                return CLIRunner.RunAsync( m, "npm", args, workingDirectory );
+            }
+
+            public static Task<bool> Add( IActivityMonitor m, string packageId, string tag, string workingDirectory = "" )
+                => Add( m, packageId, new string[] { tag }, workingDirectory );
+
+            public static Task<bool> Rm( IActivityMonitor m, string packageid, string tag, string workingDirectory = "" )
+                => CLIRunner.RunAsync( m, "npm", new string[] { "dist-tag rm", packageid, tag }, workingDirectory );
         }
-
-        public static Task<bool> Add( IActivityMonitor m, string packageId, string tag, string workingDirectory = "" )
-            => Add( m, packageId, new string[] { tag } );
-
-        public static Task<bool> Rm( IActivityMonitor m, string packageid, string tag )
-            => CLIRunner.RunAsync( m, "npm", new string[] { "dist-tag rm", packageid, tag } );
     }
 }
