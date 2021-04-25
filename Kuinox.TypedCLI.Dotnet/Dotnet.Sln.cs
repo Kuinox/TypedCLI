@@ -55,8 +55,8 @@ namespace Kuinox.TypedCLI.Dotnet
                 return CLIRunner.RunAsync( m, "dotnet", args, workingDirectory );
             }
 
-            public static Task<bool> Remove( IActivityMonitor m, string projectsPath, string workingDirectory = "", string? slnName = null )
-                => Remove( m, new[] { projectsPath }, workingDirectory, slnName );
+            public static Task<bool> Remove( IActivityMonitor m, string projectPath, string workingDirectory = "", string? slnName = null )
+                => Remove( m, new[] { projectPath }, workingDirectory, slnName );
         }
     }
 }

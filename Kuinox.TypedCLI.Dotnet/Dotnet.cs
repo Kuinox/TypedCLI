@@ -84,8 +84,10 @@ namespace Kuinox.TypedCLI.Dotnet
 
         public static Task<bool> Pack( IActivityMonitor m, string workingDirectory = "", string? projectOrSolution = null, string? configuration = null, bool force = false,
             bool includeSource = false, bool includeSymbols = false, bool noBuild = false, bool noDependencies = false, bool noRestore = false, bool noLogo = false,
-            string? outputDirectory = null, string? runtime = null, bool serviceable = false, Verbosity? verbosity = null, string? versionSuffix = null )
-            => CLIRunner.RunAsync( m, "dotnet", new List<string?>()
+            string? outputDirectory = null, string? runtime = null, bool serviceable = false, Verbosity? verbosity = null, string? versionSuffix = null,
+            IEnumerable<string>? msbuildProperties = null )
+        {
+            List<string?> args = new()
             {
                 "pack",
                 projectOrSolution,
@@ -102,7 +104,10 @@ namespace Kuinox.TypedCLI.Dotnet
                 noBuild? "--no-build" : null,
                 noLogo ? "--nologo" : null,
                 serviceable ? "--serviceable" : null
-            }, workingDirectory );
+            };
+            if( msbuildProperties != null ) args.AddRange( msbuildProperties.Select( s => "-p:" + s ) );
+            return CLIRunner.RunAsync( m, "dotnet", args, workingDirectory );
+        }
 
         public static Task<bool> Publish( IActivityMonitor m, string workingDirectory = "", string? projectOrSolution = null, string? configuration = null,
             string? framework = null, bool force = false, string? manifestPath = null, bool noBuild = false, bool noDependencies = false, bool noRestore = false,
@@ -152,9 +157,9 @@ namespace Kuinox.TypedCLI.Dotnet
             return CLIRunner.RunAsync( m, "dotnet", args, workingDirectory );
         }
 
-        public static Task<bool> Run( IActivityMonitor m, string workingDirectory = "", string? configuration = null, string? framework = null, bool force = false, string? launchProfile = null,
+        public static Task<bool> Run( IActivityMonitor m, string? thingToRun = null, string? args = null, string workingDirectory = "", string? configuration = null, string? framework = null, bool force = false, string? launchProfile = null,
             bool noBuild = false, bool noDependencies = false, bool noLaunchProfile = false, bool noRestore = false, string? projectPath = null, string? runtime = null,
-            Verbosity? verbosity = null, string? application = null, string? args = null )
+            Verbosity? verbosity = null )
             => CLIRunner.RunAsync( m, "dotnet", new List<string?>()
             {
                 "run",
@@ -169,7 +174,7 @@ namespace Kuinox.TypedCLI.Dotnet
                 "--project ".Arg( projectPath ),
                 "-r ".Arg( runtime ),
                 "-v ".Arg( GetVerbosityString( verbosity ) ),
-                application,
+                thingToRun,
                 args
             }, workingDirectory );
 

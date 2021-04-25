@@ -14,6 +14,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kuinox.TypedCLI.Helpers", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kuinox.TypedCLI.NPM", "Kuinox.TypedCLI.NPM\Kuinox.TypedCLI.NPM.csproj", "{2C62D670-5D6F-43D7-B095-047CFCDDCAAE}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeCakeBuilder", "CodeCakeBuilder\CodeCakeBuilder.csproj", "{CD41F06F-9455-4B54-BF81-3F8D5CB141B1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,6 +34,10 @@ Global
 		{2C62D670-5D6F-43D7-B095-047CFCDDCAAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2C62D670-5D6F-43D7-B095-047CFCDDCAAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2C62D670-5D6F-43D7-B095-047CFCDDCAAE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CD41F06F-9455-4B54-BF81-3F8D5CB141B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD41F06F-9455-4B54-BF81-3F8D5CB141B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD41F06F-9455-4B54-BF81-3F8D5CB141B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD41F06F-9455-4B54-BF81-3F8D5CB141B1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
