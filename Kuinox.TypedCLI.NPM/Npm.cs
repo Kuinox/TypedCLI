@@ -12,13 +12,28 @@ namespace Kuinox.TypedCLI.NPM
     {
         static string? Arg( this string @this, string? argVal ) => argVal is null ? null : @this + argVal;
 
+        public enum LogLevel
+        {
+            Silent,
+            Error,
+            Warn,
+            Notice,
+            Http,
+            Timing,
+            Info,
+            Verbose,
+            Silly
+        }
+
+        static string? Arg( this LogLevel? logLevel ) => logLevel.HasValue ? ("--loglevel " + logLevel.Value.ToString().ToLower()) : null;
+
         public static Task<bool> Ci( IActivityMonitor m, string workingDirectory = "" )
             => CLIRunner.RunAsync( m, "npm", new string[] { "ci" }, workingDirectory );
 
         public static Task<bool> Install( IActivityMonitor m, string? thingToInstall = null, string workingDirectory = "", bool saveProd = false, bool saveDev = false,
             bool saveOptional = false, bool noSave = false, bool saveExact = false, bool saveBundle = false, bool dryRun = false, bool packageLockOnly = false, bool force = false,
             string? tag = null, bool global = false, bool globalStyle = false, bool legacyBundling = false, bool legacyPeerDeps = false, bool strictPeerDeps = false,
-            bool noPackageLock = false, bool ignoreScripts = false, bool noAudit = false, bool noBinLinks = false, bool noFund = false, bool savePeer = false )
+            bool noPackageLock = false, bool ignoreScripts = false, bool noAudit = false, bool noBinLinks = false, bool noFund = false, bool savePeer = false, LogLevel? logLevel = null )
             => CLIRunner.RunAsync( m, "npm", new string?[] {
                 "install",
                 thingToInstall,
@@ -42,31 +57,35 @@ namespace Kuinox.TypedCLI.NPM
                 ignoreScripts ? "--ignore-scripts" : null,
                 noAudit ? "--no-audit" : null,
                 noBinLinks ? "--no-bin-links" : null,
-                noFund ? "--no-fund" : null
+                noFund ? "--no-fund" : null,
+                logLevel.Arg()
             }, workingDirectory );
 
-        public static Task<bool> Ping( IActivityMonitor m, string workingDirectory = "", string? registryToPing = null )
+        public static Task<bool> Ping( IActivityMonitor m, string workingDirectory = "", string? registryToPing = null, LogLevel? logLevel = null )
             => CLIRunner.RunAsync( m, "npm", new string?[]
             {
                 "ping",
-                "--registry ".Arg(registryToPing)
+                "--registry ".Arg(registryToPing),
+                logLevel.Arg()
             }, workingDirectory );
 
-        public static Task<bool> RunScript( IActivityMonitor m, string command, string? args = null, string workingDirectory = "", bool silent = false )
+        public static Task<bool> RunScript( IActivityMonitor m, string command, string? args = null, string workingDirectory = "", bool silent = false, LogLevel? logLevel = null )
             => CLIRunner.RunAsync( m, "npm", new string?[]
             {
                 "run-script",
                 silent ? "--silent" : null,
                 command,
-                "-- ".Arg(args)
+                "-- ".Arg(args),
+                logLevel.Arg()
             }, workingDirectory );
 
-        public static async Task<IEnumerable<string>?> Pack( IActivityMonitor m, IEnumerable<string>? thingsToPack = null, bool dryRun = false, string workingDirectory = "" )
+        public static async Task<IEnumerable<string>?> Pack( IActivityMonitor m, IEnumerable<string>? thingsToPack = null, bool dryRun = false, string workingDirectory = "", LogLevel? logLevel = null )
         {
             List<string?> args = new()
             {
                 "pack",
-                dryRun ? "--dry-run" : null
+                dryRun ? "--dry-run" : null,
+                logLevel.Arg()
             };
             if( thingsToPack != null ) args.AddRange( thingsToPack );
             (int code, IEnumerable<string> lines) = await CLIRunner.RunAndGetOutput( m, "npm", args, workingDirectory );
@@ -81,13 +100,14 @@ namespace Kuinox.TypedCLI.NPM
         }
 
         public static Task<bool> Publish( IActivityMonitor m, string workingDirectory = "", IEnumerable<string>? thingsToPublish = null, string? tag = null, bool dryRun = false,
-            AccessLevel? accessLevel = null )
+            AccessLevel? accessLevel = null, LogLevel? logLevel = null )
         {
             List<string?> args = new()
             {
                 "publish",
                 "--tag ".Arg( tag ),
-                dryRun ? "--dry-run" : null
+                dryRun ? "--dry-run" : null,
+                logLevel.Arg()
             };
             if( thingsToPublish != null ) args.AddRange( thingsToPublish );
             if( accessLevel.HasValue )
