@@ -63,7 +63,7 @@ namespace Kuinox.TypedCLI.Dotnet
 
             public static async Task<IEnumerable<ToolInfo>?> List( IActivityMonitor m )
             {
-                (int code, IEnumerable<string> output) = await CLIRunner.RunAndGetOutput( m, "dotnet", new List<string?>()
+                (int code, IEnumerable<string> output) = await CLIRunner.RunAndGetLinesOutput( m, "dotnet", new List<string?>()
                 {
                     "tool list --global",
                 } );
@@ -73,7 +73,7 @@ namespace Kuinox.TypedCLI.Dotnet
 
             public static async Task<IEnumerable<ToolInfo>?> List( IActivityMonitor m, string workingDirectory = "" )
             {
-                (int code, IEnumerable<string> output) = await CLIRunner.RunAndGetOutput( m, "dotnet", new List<string?>()
+                (int code, IEnumerable<string> output) = await CLIRunner.RunAndGetLinesOutput( m, "dotnet", new List<string?>()
                 {
                     "tool list"
                 }, workingDirectory );
@@ -83,7 +83,7 @@ namespace Kuinox.TypedCLI.Dotnet
 
             public static async Task<IEnumerable<ToolInfo>?> ListAt( IActivityMonitor m, string toolpath )
             {
-                (int code, IEnumerable<string> output) = await CLIRunner.RunAndGetOutput( m, "dotnet", new List<string?>()
+                (int code, IEnumerable<string> output) = await CLIRunner.RunAndGetLinesOutput( m, "dotnet", new List<string?>()
                 {
                     "tool list --tool-path", toolpath
                 } );

@@ -2,6 +2,7 @@ using CK.Core;
 using Kuinox.TypedCLI.Dotnet;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -89,7 +90,7 @@ namespace Kuinox.TypedCLI.NPM
                 logLevel.Arg()
             };
             if( thingsToPack != null ) args.AddRange( thingsToPack );
-            (int code, IEnumerable<string> lines) = await CLIRunner.RunAndGetOutput( m, "npm", args, workingDirectory );
+            (int code, IEnumerable<string> lines) = await CLIRunner.RunAndGetLinesOutput( m, "npm", args, workingDirectory );
             if( code != 0 ) return null;
             return lines;
         }
@@ -125,13 +126,28 @@ namespace Kuinox.TypedCLI.NPM
 
         public static async Task<string?> Version( IActivityMonitor m )
         {
-            (int code, IEnumerable<string> lines) = await CLIRunner.RunAndGetOutput( m, "npm", new string[] { "version" } );
+            (int code, IEnumerable<string> lines) = await CLIRunner.RunAndGetLinesOutput( m, "npm", new string[] { "version" } );
             if( code != 0 ) return null;
             if( lines.Count() > 0 )
             {
                 m.Warn( "npm version returned multiples lines. This is not expected, only the first line will be used." );
             }
             return lines.First();
+        }
+
+        public static async Task<string?> View( IActivityMonitor m, string? thingToView = null, string workingDirectory = "", bool json = false )
+        {
+            (int code, string output) = await CLIRunner.RunAndGetOutput( m, "npm", new string?[]
+            {
+                thingToView,
+                json ? "--json" : null
+            }, workingDirectory );
+            if( code != 0 )
+            {
+                m.Error( "Could not fetch the package infos." );
+                return null;
+            }
+            return output;
         }
     }
 }
