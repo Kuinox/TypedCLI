@@ -2,6 +2,7 @@ using CK.Core;
 using Kuinox.TypedCLI.Dotnet;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -120,6 +121,17 @@ namespace Kuinox.TypedCLI.NPM
                 } );
             }
             return CLIRunner.RunAsync( m, "npm", args, workingDirectory );
+        }
+
+        public static async Task<string?> Version( IActivityMonitor m )
+        {
+            (int code, IEnumerable<string> lines) = await CLIRunner.RunAndGetOutput( m, "npm", new string[] { "version" } );
+            if( code != 0 ) return null;
+            if( lines.Count() > 0 )
+            {
+                m.Warn( "npm version returned multiples lines. This is not expected, only the first line will be used." );
+            }
+            return lines.First();
         }
     }
 }
