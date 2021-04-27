@@ -26,6 +26,8 @@ namespace Kuinox.TypedCLI.Dotnet
             using( Process process = Process.Start( startInfo )! )
             {
                 TaskCompletionSource<object?> _ctsExit = new();
+                process.Exited += ( _, _ ) => _ctsExit.SetResult( null );
+                if( process.HasExited ) _ctsExit.SetResult( null );
                 process.ErrorDataReceived += ( o, e ) =>
                 {
                     if( !string.IsNullOrEmpty( e.Data ) )
@@ -46,7 +48,6 @@ namespace Kuinox.TypedCLI.Dotnet
                         }
                     }
                 };
-                process.Exited += ( _, _ ) => _ctsExit.SetResult( null );
                 process.BeginErrorReadLine();
                 process.BeginOutputReadLine();
                 await _ctsExit.Task;
