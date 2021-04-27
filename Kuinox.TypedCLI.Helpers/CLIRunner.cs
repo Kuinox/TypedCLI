@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Kuinox.TypedCLI.Dotnet
@@ -66,11 +67,15 @@ namespace Kuinox.TypedCLI.Dotnet
                 UseShellExecute = false,
                 CreateNoWindow = true
             };
-            using( m.OpenInfo( $"Running {cliName} {argStr} in {Path.GetFullPath( workingDirectory )}" ) )
+            TaskCompletionSource<object?> _ctsExit = new();
+            using( m.OpenInfo( $"Running {cliName} {argStr} in {Path.GetFullPath( workingDirectory == "" ? "." : workingDirectory )}" ) )
             using( Process process = Process.Start( startInfo )! )
+            using( CancellationTokenSource cts = new() )
+            using( cts.Token.Register( () => _ctsExit.SetResult( null ) ) )
             {
+                process.EnableRaisingEvents = true;
                 StringBuilder sb = new();
-                TaskCompletionSource<object?> _ctsExit = new();
+
                 process.ErrorDataReceived += ( o, e ) =>
                 {
                     if( !string.IsNullOrEmpty( e.Data ) )
@@ -92,7 +97,8 @@ namespace Kuinox.TypedCLI.Dotnet
                         }
                     }
                 };
-                process.Exited += ( _, _ ) => _ctsExit.SetResult( null );
+                process.Exited += ( _, _ ) => cts.Cancel();
+                if( process.HasExited ) cts.Cancel();
                 process.BeginErrorReadLine();
                 process.BeginOutputReadLine();
                 await _ctsExit.Task;
@@ -138,6 +144,7 @@ namespace Kuinox.TypedCLI.Dotnet
                     }
                 };
                 process.Exited += ( _, _ ) => _ctsExit.SetResult( null );
+                if( process.HasExited ) _ctsExit.SetResult( null );
                 process.BeginErrorReadLine();
                 process.BeginOutputReadLine();
                 await _ctsExit.Task;
