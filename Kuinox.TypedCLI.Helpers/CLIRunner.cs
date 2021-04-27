@@ -14,18 +14,18 @@ namespace Kuinox.TypedCLI.Dotnet
         public static async Task<bool> RunAsync( IActivityMonitor m, string cliName, IEnumerable<string?> args, string workingDirectory = "" )
         {
             string argStr = args.Where( s => !string.IsNullOrWhiteSpace( s ) ).Concatenate( " " );
+            ProcessStartInfo startInfo = new( cliName, argStr )
+            {
+                WorkingDirectory = workingDirectory,
+                RedirectStandardError = true,
+                RedirectStandardOutput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
             using( m.OpenInfo( $"Running {cliName} {argStr} in {Path.GetFullPath( workingDirectory )}" ) )
-            using( Process process = new() )
+            using( Process process = Process.Start( startInfo )! )
             {
                 TaskCompletionSource<object?> _ctsExit = new();
-                process.StartInfo = new ProcessStartInfo( cliName, argStr )
-                {
-                    WorkingDirectory = workingDirectory,
-                    RedirectStandardError = true,
-                    RedirectStandardOutput = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                };
                 process.ErrorDataReceived += ( o, e ) =>
                 {
                     if( !string.IsNullOrEmpty( e.Data ) )
@@ -57,19 +57,19 @@ namespace Kuinox.TypedCLI.Dotnet
         public static async Task<(int, IEnumerable<string>)> RunAndGetLinesOutput( IActivityMonitor m, string cliName, IEnumerable<string?> args, string workingDirectory = "" )
         {
             string argStr = args.Where( s => !string.IsNullOrWhiteSpace( s ) ).Concatenate( " " );
+            ProcessStartInfo startInfo = new( cliName, argStr )
+            {
+                WorkingDirectory = workingDirectory,
+                RedirectStandardError = true,
+                RedirectStandardOutput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
             using( m.OpenInfo( $"Running {cliName} {argStr} in {Path.GetFullPath( workingDirectory )}" ) )
-            using( Process process = new() )
+            using( Process process = Process.Start( startInfo )! )
             {
                 StringBuilder sb = new();
                 TaskCompletionSource<object?> _ctsExit = new();
-                process.StartInfo = new ProcessStartInfo( cliName, argStr )
-                {
-                    WorkingDirectory = workingDirectory,
-                    RedirectStandardError = true,
-                    RedirectStandardOutput = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                };
                 process.ErrorDataReceived += ( o, e ) =>
                 {
                     if( !string.IsNullOrEmpty( e.Data ) )
@@ -102,19 +102,19 @@ namespace Kuinox.TypedCLI.Dotnet
         public static async Task<(int, string)> RunAndGetOutput( IActivityMonitor m, string cliName, IEnumerable<string?> args, string workingDirectory = "" )
         {
             string argStr = args.Where( s => !string.IsNullOrWhiteSpace( s ) ).Concatenate( " " );
+            ProcessStartInfo startInfo = new( cliName, argStr )
+            {
+                WorkingDirectory = workingDirectory,
+                RedirectStandardError = true,
+                RedirectStandardOutput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
             using( m.OpenInfo( $"Running {cliName} {argStr} in {Path.GetFullPath( workingDirectory )}" ) )
-            using( Process process = new() )
+            using( Process process = Process.Start( startInfo )! )
             {
                 StringBuilder sb = new();
                 TaskCompletionSource<object?> _ctsExit = new();
-                process.StartInfo = new ProcessStartInfo( cliName, argStr )
-                {
-                    WorkingDirectory = workingDirectory,
-                    RedirectStandardError = true,
-                    RedirectStandardOutput = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                };
                 process.ErrorDataReceived += ( o, e ) =>
                 {
                     if( !string.IsNullOrEmpty( e.Data ) )
