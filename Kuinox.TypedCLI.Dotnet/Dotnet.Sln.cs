@@ -21,7 +21,7 @@ namespace Kuinox.TypedCLI.Dotnet
 
             public static async Task<IEnumerable<string>?> List( IActivityMonitor m, string workingDirectory = "", string? slnName = null )
             {
-                (int exitCode, IEnumerable<string> output) = await CLIRunner.RunAndGetLinesOutput( m, "dotnet", new[] { "sln list", slnName }, workingDirectory );
+                (int exitCode, IEnumerable<string> output) = await CLIRunner.RunAndGetLinesOutput( m, "dotnet", new[] { "sln", slnName, "list" }, workingDirectory );
                 if( exitCode != 0 ) return null;
                 return output.Skip( 2 );
             }
