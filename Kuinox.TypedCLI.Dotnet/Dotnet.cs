@@ -38,7 +38,8 @@ namespace Kuinox.TypedCLI.Dotnet
         public static Task<bool> Build( IActivityMonitor m, string workingDirectory = "", string? projectOrSolution = null,
             string? configuration = null, string? framework = null, bool force = false, bool noDependencies = false,
             bool noIncremental = false, bool noRestore = false, bool noLogo = false, string? outputDirectory = null,
-            string? runtime = null, string[]? sources = null, Verbosity? verbosity = null, string? versionSuffix = null )
+            string? runtime = null, string[]? sources = null, Verbosity? verbosity = null, string? versionSuffix = null,
+            IEnumerable<KeyValuePair<string, string>>? msbuildProperties = null )
         {
             List<string?> args = new()
             {
@@ -57,6 +58,7 @@ namespace Kuinox.TypedCLI.Dotnet
                 "--version-suffix ".Arg( versionSuffix )
             };
             if( sources != null ) args.AddRange( sources.Select( s => "--source ".Arg( s ) ) );
+            if( msbuildProperties != null ) args.AddRange( msbuildProperties.Select( s => "-p:" + s.Key + "=\"" + s.Value + "\"" ) );
             return CLIRunner.RunAsync( m, "dotnet", args, workingDirectory );
         }
 
@@ -82,10 +84,23 @@ namespace Kuinox.TypedCLI.Dotnet
                 "-v ".Arg( GetVerbosityString( verbosity ) )
             }, workingDirectory );
 
-        public static Task<bool> Pack( IActivityMonitor m, string workingDirectory = "", string? projectOrSolution = null, string? configuration = null, bool force = false,
-            bool includeSource = false, bool includeSymbols = false, bool noBuild = false, bool noDependencies = false, bool noRestore = false, bool noLogo = false,
-            string? outputDirectory = null, string? runtime = null, bool serviceable = false, Verbosity? verbosity = null, string? versionSuffix = null,
-            IEnumerable<KeyValuePair<string, string>>? msbuildProperties = null )
+        public static Task<bool> Pack( IActivityMonitor m,
+                                      string workingDirectory = "",
+                                      string? projectOrSolution = null,
+                                      string? configuration = null,
+                                      bool force = false,
+                                      bool includeSource = false,
+                                      bool includeSymbols = false,
+                                      bool noBuild = false,
+                                      bool noDependencies = false,
+                                      bool noRestore = false,
+                                      bool noLogo = false,
+                                      string? outputDirectory = null,
+                                      string? runtime = null,
+                                      bool serviceable = false,
+                                      Verbosity? verbosity = null,
+                                      string? versionSuffix = null,
+                                      IEnumerable<KeyValuePair<string, string>>? msbuildProperties = null )
         {
             List<string?> args = new()
             {
@@ -109,9 +124,22 @@ namespace Kuinox.TypedCLI.Dotnet
             return CLIRunner.RunAsync( m, "dotnet", args, workingDirectory );
         }
 
-        public static Task<bool> Publish( IActivityMonitor m, string workingDirectory = "", string? projectOrSolution = null, string? configuration = null,
-            string? framework = null, bool force = false, string? manifestPath = null, bool noBuild = false, bool noDependencies = false, bool noRestore = false,
-            bool noLogo = false, string? outputDirectory = null, string? runtime = null, bool? selfContained = null, Verbosity? verbosity = null, string? versionSuffix = null )
+        public static Task<bool> Publish( IActivityMonitor m,
+                                         string workingDirectory = "",
+                                         string? projectOrSolution = null,
+                                         string? configuration = null,
+                                         string? framework = null,
+                                         bool force = false,
+                                         string? manifestPath = null,
+                                         bool noBuild = false,
+                                         bool noDependencies = false,
+                                         bool noRestore = false,
+                                         bool noLogo = false,
+                                         string? outputDirectory = null,
+                                         string? runtime = null,
+                                         bool? selfContained = null,
+                                         Verbosity? verbosity = null,
+                                         string? versionSuffix = null )
             => CLIRunner.RunAsync( m, "dotnet", new List<string?>()
             {
                 "publish",

@@ -23,9 +23,10 @@ namespace Kuinox.TypedCLI.Dotnet
                 UseShellExecute = false,
                 CreateNoWindow = true
             };
-            using( m.OpenInfo( $"Running {cliName} {argStr} in {Path.GetFullPath( workingDirectory )}" ) )
+            using( m.OpenInfo( $"Running {cliName} {argStr} in {Path.GetFullPath( workingDirectory == "" ? "." : workingDirectory )}" ) )
             using( Process process = Process.Start( startInfo )! )
             {
+                process.EnableRaisingEvents = true;
                 TaskCompletionSource<object?> _ctsExit = new();
                 process.Exited += ( _, _ ) => _ctsExit.SetResult( null );
                 if( process.HasExited ) _ctsExit.SetResult( null );
@@ -117,9 +118,10 @@ namespace Kuinox.TypedCLI.Dotnet
                 UseShellExecute = false,
                 CreateNoWindow = true
             };
-            using( m.OpenInfo( $"Running {cliName} {argStr} in {Path.GetFullPath( workingDirectory )}" ) )
+            using( m.OpenInfo( $"Running {cliName} {argStr} in {Path.GetFullPath( workingDirectory == "" ? "." : workingDirectory )}" ) )
             using( Process process = Process.Start( startInfo )! )
             {
+                process.EnableRaisingEvents = true;
                 StringBuilder sb = new();
                 TaskCompletionSource<object?> _ctsExit = new();
                 process.ErrorDataReceived += ( o, e ) =>
