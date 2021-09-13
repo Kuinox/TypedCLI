@@ -70,9 +70,10 @@ namespace Kuinox.TypedCLI.Dotnet
                 vbcscompiler ? "--vbcscompiler" : null
             } );
 
-        public static Task<bool> Clean( IActivityMonitor m, string workingDirectory = "", string? projectOrSolution = null, string? configuration = null, string? framework = null,
+        public static async Task Clean( IActivityMonitor m, string workingDirectory = "", string? projectOrSolution = null, string? configuration = null, string? framework = null,
             bool nologo = false, string? outputDirectory = null, string? runtime = null, Verbosity? verbosity = null )
-            => CLIRunner.RunAsync( m, "dotnet", new List<string?>()
+        {
+            bool result = await CLIRunner.RunAsync( m, "dotnet", new List<string?>()
             {
                 "clean",
                 projectOrSolution,
@@ -83,6 +84,8 @@ namespace Kuinox.TypedCLI.Dotnet
                 "-r ".Arg( runtime ),
                 "-v ".Arg( GetVerbosityString( verbosity ) )
             }, workingDirectory );
+            if( !result ) throw new InvalidOperationException( "dotnet clean was not successful." );
+        }
 
         public static Task<bool> Pack( IActivityMonitor m,
                                       string workingDirectory = "",
